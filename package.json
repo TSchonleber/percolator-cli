@@ -11,9 +11,11 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "typecheck:tests": "tsc -p tsconfig.tests.json",
-    "smoke": "tsx scripts/smoke-v16-bounty5.ts",
-    "test": "tsx tests/v16/devnet-smoke.ts",
-    "test:offline": "tsx scripts/verify-manifest.ts"
+    "test": "pnpm test:layout && pnpm test:ix && pnpm test:e2e",
+    "test:offline": "pnpm test:layout && pnpm test:ix",
+    "test:layout": "tsx tests/v16/layout-check.ts",
+    "test:ix": "tsx tests/v16/ix-vectors.ts",
+    "test:e2e": "tsx tests/v16/e2e-litesvm.ts"
   },
   "dependencies": {
     "@pythnetwork/hermes-client": "^2.1.0",
@@ -26,6 +28,7 @@
   "devDependencies": {
     "@types/node": "^20.17.10",
     "dotenv": "^17.2.4",
+    "litesvm": "0.8.0",
     "tsup": "^8.3.5",
     "tsx": "^4.21.0",
     "typescript": "^5.7.2"

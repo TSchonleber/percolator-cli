@@ -2,6 +2,22 @@
 
 Command-line interface for interacting with the Percolator perpetuals protocol on Solana.
 
+## SDK status (fork)
+
+`src/v16` targets **percolator-prog `5cb331dd`** (engine `4db11a8`). It is kept honest by three tests:
+
+| Command | What it proves |
+|---|---|
+| `pnpm test:layout` | Every byte offset/length in `constants.ts` equals the compiler-reported layout (`tests/fixtures/prog-layout.json`, from `percolator-prog/examples/dump_layout_json.rs`). |
+| `pnpm test:ix` | All 49 instruction encoders (`encode.gen.ts`, generated from the program's `Instruction::encode`) are byte-identical to the program's own encoder (`tests/fixtures/ix-vectors.jsonl`). |
+| `pnpm test:e2e` | The SDK drives the compiled program in-process (LiteSVM): market, portfolios, deposit, replay rejection, trade, crank, insurance top-up rules, withdraw, close. Needs `../percolator-prog/target/deploy/percolator_prog.so` (`cargo build-sbf`) or `PERCOLATOR_SO`. |
+
+Regenerate after a program bump with the scripts in `tools/layout/` (`gen_dump.py`, `parse_encode.py`, `gen_ix.py`, `gen_ts.py`).
+
+Use the `*Ix` builders in `src/v16/builders.ts`; they carry the account lists and read the replay-protection
+bindings (`readPortfolioBinding`, `readMarketBinding`). Every transaction needs `computeBudgetIxs()` (128 KiB heap).
+The scripts under `scripts/` and `tests/legacy-devnet/` predate the port and use the old wire formats.
+
 ## Related Repositories
 
 - [percolator](https://github.com/aeyakovenko/percolator) - Risk engine library
